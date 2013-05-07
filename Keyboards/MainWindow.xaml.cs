@@ -38,7 +38,7 @@ namespace Keyboards
             }
         }
 
-        private void testbutton_Click(object sender, RoutedEventArgs e)
+        private async void testbutton_Click(object sender, RoutedEventArgs e)
         {
             String inFileName = null;
             String outFilename = null;
@@ -71,8 +71,20 @@ namespace Keyboards
             {
                 LKParser parser = new LKParser(inFileName, outFilename);
                 MessageBox.Show("inFile:\t" + parser.getInPath() + "\nOutFile:\t" + parser.getOutPath());
-
-                parser.readFileAsync();
+                
+                Dictionary<string, UInt16> letters;
+                Task<Dictionary<string, UInt16>> getLetters = parser.readFileAsync();
+                letters = await getLetters;
+                //await parser.readFileAsync();
+                //Dictionary<string, UInt16> letters = parser.getLettersDic();
+                string outputString = "";
+                foreach (string s in letters.Keys)
+                {
+                    outputString += "Key: " + s + "\tTimes: " + letters[s] + "\n";
+                }
+                parser.writeFileAsync();
+                MessageBox.Show("Done", "Completed");
+                //MessageBox.Show("Result:\n" + outputString);
             }
         }
     }
